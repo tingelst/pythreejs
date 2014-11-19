@@ -15,6 +15,7 @@ require.config({
 
 define(["widgets/js/widget", "widgets/js/manager", "base/js/utils", "threejs", "threejs-trackball", "threejs-orbit", "threejs-detector"], function(widget, manager, utils, THREE) {
     console.log("loading pythreejs");
+    var register = {};
     var RendererView = widget.DOMWidgetView.extend({
         render : function(){
             console.log('created renderer');
@@ -30,25 +31,30 @@ define(["widgets/js/widget", "widgets/js/manager", "base/js/utils", "threejs", "
             else
                 this.renderer = new THREE.CanvasRenderer();
             this.$el.empty().append( this.renderer.domElement );
-            this.camera = this.create_child_view(this.model.get('camera'),
-                                                render_loop);
-            this.scene = this.create_child_view(this.model.get('scene'),
-                                               render_loop);
-            this.scene.obj.add(this.camera.obj);
-            console.log('renderer', this.model, this.scene.obj, this.camera.obj);
-            this.update();
-            this._animation_frame = false
-            this.controls = _.map(this.model.get('controls'), function(m) {return this.create_child_view(m,
-                     _.extend({},
-                              {dom: this.renderer.domElement,
-                               start_update_loop: function() {that._update_loop = true; that.schedule_update();},
-                               end_update_loop: function() {that._update_loop = false;},
-                               renderer: this},
-                              render_loop))}, this);
-;
-            this._render = true;
-            this.schedule_update();
-            window.r = this;
+            return Promise.all([this.create_child_view(this.model.get('camera'), render_loop), 
+                                this.create_child_view(this.model.get('scene'), render_loop)], 
+                               function(camera, scene) {
+                                   that.camera = camera;
+                                   that.scene = scene;
+                                   that.scene.obj.add(that.camera.obj);
+                                   console.log('renderer', that.model, that.scene.obj, that.camera.obj);
+                                   that.update();
+                                   that._animation_frame = false;
+                               }).then(function() {
+                                   return Promise.all(_.map(that.model.get('controls'), function(m) {
+                                       return that.create_child_view(m, _.extend({},
+                                                                                 {dom: that.renderer.domElement,
+                                                                                  start_update_loop: function() {that._update_loop = true; that.schedule_update();},
+                                                                                  end_update_loop: function() {that._update_loop = false;},
+                                                                                  renderer: that},
+                                                                                 render_loop))}, that), function(controls) {
+                                                                                     
+                                                                                     that.controls = controls;
+                                                                                     that._render = true;
+                                                                                     that.schedule_update();
+                                                                                     /*window.r = that;*/
+                                                                                 });
+                               });
         },
         schedule_update: function() {
             if (!this._animation_frame) {
