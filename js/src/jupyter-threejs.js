@@ -663,6 +663,31 @@ define(["jupyter-js-widgets", "underscore", "three"],
         }
     });
 
+    var CameraHelperView = Object3dView.extend({
+        update: function() {
+            this.replace_obj(new THREE.CameraHelper(this.model.get('camera')));
+        }
+    });
+
+
+
+    var ArrowHelperView = Object3dView.extend({
+        update: function() {
+            this.replace_obj(new THREE.ArrowHelper(this.model.get('dir'),
+                                                   this.model.get('origin'),
+                                                   this.model.get('length'),
+                                                   this.model.get('hex'),
+                                                   this.model.get('headLength'),
+                                                   this.model.get('headWidth')));
+        }
+    });
+
+    var AxisHelperView = ThreeView.extend({
+        update: function() {
+            this.replace_obj(new THREE.AxisHelper(this.model.get('size')));
+        }
+    });
+
     var SphereGeometryView = ThreeView.extend({
         update: function() {
             this.replace_obj(new THREE.SphereGeometry(this.model.get('radius'), 32,16));
@@ -1635,6 +1660,41 @@ define(["jupyter-js-widgets", "underscore", "three"],
         })
     });
 
+    var CameraHelperModel = Object3dModel.extend({
+        defaults: _.extend({}, Object3dModel.prototype.defaults, {
+            _view_name: 'CameraHelperView',
+            _model_name: 'CameraHelperModel',
+
+            camera: undefined
+
+        })
+    });
+
+    var ArrowHelperModel = Object3dModel.extend({
+        defaults: _.extend({}, Object3dModel.prototype.defaults, {
+            _view_name: 'ArrowHelperView',
+            _model_name: 'ArrowHelperModel',
+
+            dir: [],
+            origin: [],
+            length: 1,
+            hex: '#ffff00',
+            headLength: 0.2,
+            headWidth: 0.04
+
+        })
+    });
+
+    var AxisHelperModel = GeometryModel.extend({
+        defaults: _.extend({}, GeometryModel.prototype.defaults, {
+            _view_name: 'AxisHelperView',
+            _model_name: 'AxisHelperModel',
+
+            size: 1
+
+        })
+    });
+
     var SphereGeometryModel = GeometryModel.extend({
         defaults: _.extend({}, GeometryModel.prototype.defaults, {
             _view_name: 'SphereGeometryView',
@@ -1956,6 +2016,12 @@ define(["jupyter-js-widgets", "underscore", "three"],
     });
 
     return {
+        CameraHelperView: CameraHelperView,
+        CameraHelperModel: CameraHelperModel,
+        AxisHelperView: AxisHelperView,
+        AxisHelperModel: AxisHelperModel,
+        ArrowHelperView: ArrowHelperView,
+        ArrowHelperModel : ArrowHelperModel,
         AmbientLight : AmbientLight,
         AmbientLightModel : AmbientLightModel,
         EffectModel : EffectModel,

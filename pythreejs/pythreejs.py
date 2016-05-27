@@ -272,6 +272,25 @@ class PlainGeometry(Geometry):
     faces = List(List(CFloat)).tag(sync=True)
     # todo: faceVertexUvs = List(vector3(vector2(CFloat))).tag(sync=True)
 
+class ArrowHelper(Object3d):
+    _view_name = Unicode('ArrowHelperView').tag(sync=True)
+    _model_name = Unicode('ArrowHelperModel').tag(sync=True)
+
+    dir = vector3(CFloat, [1, 0, 0]).tag(sync=True)
+    origin = vector3(CFloat).tag(sync=True)
+    length = CFloat(1).tag(sync=True)
+    hex = Color('#ffff00').tag(sync=True)
+    headLength = CFloat(0.2).tag(sync=True)
+    headWidth = CFloat(0.04).tag(sync=True)
+
+class AxisHelper(Geometry):
+    _view_name = Unicode('AxisHelperView').tag(sync=True)
+    _model_name = Unicode('AxisHelperModel').tag(sync=True)
+
+    size = CFloat(1).tag(sync=True)
+
+
+
 
 class SphereGeometry(Geometry):
     _view_name = Unicode('SphereGeometryView').tag(sync=True)
@@ -714,6 +733,12 @@ class Camera(Object3d):
     _model_name = Unicode('CameraModel').tag(sync=True)
 
 
+class CameraHelper(Object3d):
+    _view_name = Unicode('CameraHelperView').tag(sync=True)
+    _model_name = Unicode('CameraHelperModel').tag(sync=True)
+
+    camera = Instance(Camera).tag(sync=True, **widget_serialization)
+
 class PerspectiveCamera(Camera):
     _view_name = Unicode('PerspectiveCameraView').tag(sync=True)
     _model_name = Unicode('PerspectiveCameraModel').tag(sync=True)
@@ -758,7 +783,7 @@ class Renderer(DOMWidget):
     _model_name = Unicode('RendererModel').tag(sync=True)
 
     width = Unicode('600').tag(sync=True)  # TODO: stop relying on deprecated DOMWidget attribute
-    height = Unicode('400').tag(sync=True) 
+    height = Unicode('400').tag(sync=True)
     renderer_type = Enum(['webgl', 'canvas', 'auto'], 'auto').tag(sync=True)
     scene = Instance(Scene).tag(sync=True, **widget_serialization)
     camera = Instance(Camera).tag(sync=True, **widget_serialization)

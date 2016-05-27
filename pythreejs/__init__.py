@@ -1,6 +1,9 @@
 from ._version import version_info, __version__
 
 from .pythreejs import (
+    CameraHelper,
+    AxisHelper,
+    ArrowHelper,
     Texture,
     ImageTexture,
     DataTexture,
@@ -70,7 +73,10 @@ from .pythreejs import (
 
 
 # don't include install_nbextension and the lights functions when we import *
-__all__ = ["Texture",
+__all__ = ["CameraHelper",
+           "ArrowHelper",
+           "AxisHelper",
+           "Texture",
            "ImageTexture",
            "DataTexture",
            "Color",
